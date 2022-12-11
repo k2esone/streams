@@ -1,5 +1,9 @@
 package pl.sda.j133.streams.postawy.homework;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -84,13 +88,30 @@ public class Main {
         Optional<Programmer> StreamH = programmers.stream()
                 .filter(programmer -> programmer.getLanguages().isEmpty())
                 .findAny();
+        StreamH.ifPresent(System.out::println);
 
         int StreamI = (int) programmers.stream()
                 .filter(programmer -> !programmer.getPerson().isMale())
-                .map(Programmer::getLanguages)
-                .flatMap(Collection::parallelStream)
-                .count();
+                .flatMap(programmer -> programmer.getLanguages().stream())
+                .distinct().count();
         System.out.println(StreamI);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("plik.txt"))) {
+
+//            Optional<String> najdluzszaLinia = reader.lines()
+//                    .max((o1, o2) -> {
+//                        return Integer.compare(o1.length(), o2.length());
+//                    });
+
+            Optional<String> najdluzszaLinia = reader.lines()
+                    .max(Comparator.comparingInt(String::length));
+            najdluzszaLinia.ifPresent(System.out::println);
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
 
     }
